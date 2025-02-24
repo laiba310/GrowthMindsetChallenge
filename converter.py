@@ -1,9 +1,9 @@
-from io import BytesIO
 import streamlit as st
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+from io import BytesIO  # Corrected import
 
 def show_converter():
     st.title("✨Data Sweeper By Laiba Adnan")
