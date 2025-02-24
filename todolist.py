@@ -6,59 +6,52 @@ def show_todolist():
     if 'tasks' not in st.session_state:
         st.session_state['tasks'] = []
 
-  
     def add_task():
-        task = st.text_input("Enter a task", "")
-        if st.button("Add Task") and task != "":
-            st.session_state.tasks.append(task)
+        task = st.text_input("Enter a task", key="new_task")
+        if st.button("Add Task") and task.strip() != "":
+            st.session_state.tasks.append(task.strip())
             st.rerun()
 
-    
-    def remove_task(task):
-        st.session_state.tasks.remove(task)
+    def remove_task(index):
+        del st.session_state.tasks[index]
         st.rerun()
 
     add_task()
 
     if st.session_state.tasks:
-        # Heading for the tasks
         st.write("### Your Todo List:")
 
-       
-        for task in st.session_state.tasks:
-           
+        for index, task in enumerate(st.session_state.tasks):
             col1, col2 = st.columns([9, 1])
 
-            # Task text on the left side
             with col1:
                 st.write(f"- {task}")
 
-            # Remove button on the right side
             with col2:
-                if st.button("Remove", key=task):
-                    remove_task(task)
+                if st.button("Remove", key=f"remove_{index}"):
+                    remove_task(index)
 
-               
-                st.markdown("""
-                    <style>
-                        .stButton button {
-                           font-size: 18px;
-            font-weight: bold;
-            color: white;
-            background: #008CBA;
-            border-radius: 10px;
-            padding: 8px 20px;
-            margin: 5px;
-            border: none;
-        word-break: normal !important;
-        white-space: nowrap !important;
-                        }
-                        .stButton button:hover {
-                            background-color: #2b6cb0;
-                        }
-                    </style>
-                """, unsafe_allow_html=True)
+        # CSS Styling for Buttons
+        st.markdown("""
+            <style>
+                .stButton button {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: white;
+                    background: #008CBA;
+                    border-radius: 10px;
+                    padding: 8px 20px;
+                    margin: 5px;
+                    border: none;
+                    word-break: normal !important;
+                    white-space: nowrap !important;
+                }
+                .stButton button:hover {
+                    background-color: #2b6cb0;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
     else:
-       
         st.write("No tasks added yet!")
 
