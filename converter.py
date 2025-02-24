@@ -2,6 +2,8 @@ from io import BytesIO
 import streamlit as st
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def show_converter():
     st.title("✨Data Sweeper By Laiba Adnan")
@@ -27,6 +29,24 @@ def show_converter():
             st.write("Preview the Head of the Dataframe")
             st.dataframe(df.head())
 
+            st.subheader("📊 Data Visualization")
+            numeric_columns = df.select_dtypes(include=['number']).columns
+            if not numeric_columns.empty:
+                chart_type = st.selectbox("Select chart type:", ["Histogram", "Scatter Plot"], key=file.name)
+                selected_column = st.selectbox("Select a numeric column:", numeric_columns, key=f"num_{file.name}")
+                
+                if st.button(f"Generate {chart_type} for {file.name}"):
+                    fig, ax = plt.subplots()
+                    if chart_type == "Histogram":
+                        sns.histplot(df[selected_column], kde=True, ax=ax)
+                    elif chart_type == "Scatter Plot":
+                        second_column = st.selectbox("Select another numeric column:", numeric_columns, key=f"num2_{file.name}")
+                        sns.scatterplot(x=df[selected_column], y=df[second_column], ax=ax)
+                    
+                    st.pyplot(fig)
+            else:
+                st.warning("No numeric columns found for visualization.")
+            
             st.subheader("Data Cleaning Options")
             if st.checkbox(f"Clean Data for {file.name}"):
                 col1, col2 = st.columns(2)
@@ -42,7 +62,6 @@ def show_converter():
                         df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
                         st.write("Missing Values Filled!")
 
-         
             st.subheader("⚙️ Conversion Options")
             conversion_type = st.radio(f"Convert {file.name} to:", ["CSV", "Excel"], key=file.name)
             
